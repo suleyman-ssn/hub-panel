@@ -6,9 +6,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
 const PORT = process.env.PORT || 3000
 
-const CHIBBIS1_URL = process.env.CHIBBIS1_URL || 'https://soothing-insight-production-8757.up.railway.app'
+const CHIBBIS1_URL = process.env.CHIBBIS1_URL || 'https://chibbis-production.up.railway.app'
 const CHIBBIS2_URL = process.env.CHIBBIS2_URL || 'https://chibbis-2-backend-production.up.railway.app'
-const FLOWWOW_URL = process.env.FLOWWOW_URL || 'https://zonal-curiosity-production-2157.up.railway.app'
+const FLOWWOW_URL = process.env.FLOWWOW_URL || 'https://flowwow-production.up.railway.app'
 
 async function safeFetch(url) {
   try {
