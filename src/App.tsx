@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
 import {
-  ConfigProvider,
   Layout,
   Typography,
   Row,
@@ -14,7 +13,6 @@ import {
   Menu,
   Table,
   Tag,
-  theme,
 } from 'antd'
 import {
   ShoppingCartOutlined,
@@ -32,7 +30,6 @@ import {
   ClockCircleOutlined,
   WarningOutlined,
 } from '@ant-design/icons'
-import ruRU from 'antd/locale/ru_RU'
 
 const { Header, Content, Sider } = Layout
 const { Title, Text } = Typography
@@ -299,7 +296,6 @@ export default function App() {
   const [loading, setLoading] = useState(true)
   const [active, setActive] = useState('chibbis1')
   const [collapsed, setCollapsed] = useState(false)
-  const { token } = theme.useToken()
 
   const fetchStats = useCallback(async () => {
     setLoading(true)
@@ -331,8 +327,7 @@ export default function App() {
   }
 
   return (
-    <ConfigProvider locale={ruRU} theme={{ token: { colorPrimary: BLUE, borderRadius: 8 } }}>
-      <Layout style={{ minHeight: '100vh' }}>
+    <Layout style={{ minHeight: '100vh' }}>
         <Sider
           collapsible
           collapsed={collapsed}
@@ -368,7 +363,7 @@ export default function App() {
           <Header
             style={{
               background: '#fff',
-              borderBottom: `1px solid ${token.colorBorderSecondary}`,
+              borderBottom: '1px solid #f0f0f0',
               padding: '0 24px',
               display: 'flex',
               alignItems: 'center',
@@ -400,6 +395,5 @@ export default function App() {
           </Content>
         </Layout>
       </Layout>
-    </ConfigProvider>
   )
 }
