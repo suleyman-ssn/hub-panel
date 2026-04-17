@@ -1,4 +1,5 @@
 import React from 'react'
+import './index.css'
 import ReactDOM from 'react-dom/client'
 import { ConfigProvider } from 'antd'
 import ruRU from 'antd/locale/ru_RU'
