@@ -30,7 +30,7 @@ const panels: PanelItem[] = [
     key: 'chibbis',
     title: 'Chibbis',
     description: 'Заказы и товары с маркетплейса Chibbis. Синхронизация с МойСклад.',
-    url: 'https://chibbis-production.up.railway.app/',
+    url: 'https://soothing-insight-production-8757.up.railway.app/',
     icon: <ShoppingCartOutlined style={{ fontSize: 32 }} />,
     tag: 'Цветы',
     tagColor: 'green',
