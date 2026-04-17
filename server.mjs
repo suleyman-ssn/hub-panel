@@ -31,6 +31,6 @@ app.get('/api/aggregate', async (_req, res) => {
 })
 
 app.use(express.static(path.join(__dirname, 'dist')))
-app.get('*', (_req, res) => res.sendFile(path.join(__dirname, 'dist', 'index.html')))
+app.get('/{*path}', (_req, res) => res.sendFile(path.join(__dirname, 'dist', 'index.html')))
 
 app.listen(PORT, () => console.log(`Hub panel running on port ${PORT}`))
