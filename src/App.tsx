@@ -52,10 +52,20 @@ interface FlowwowStats {
   recentErrors?: { action: string; errorMessage: string; entityId: string; createdAt: string }[]
 }
 
+interface PhpStats {
+  total: number
+  today: number
+  pending: number
+}
+
 interface AggregateData {
   chibbis1: ChibbisStats | null
   chibbis2: ChibbisStats | null
   flowwow: FlowwowStats | null
+  yandex: PhpStats | null
+  flawery: PhpStats | null
+  letu: PhpStats | null
+  cake: PhpStats | null
 }
 
 function timeAgo(iso: string | null): string {
@@ -250,6 +260,57 @@ function FlowwowPanel({ data, url, loading }: { data: FlowwowStats | null; url: 
   )
 }
 
+function PhpPanel({ data, url, loading }: { data: PhpStats | null; url: string; loading: boolean }) {
+  if (loading) return <div style={{ textAlign: 'center', padding: 60 }}><Spin size="large" /></div>
+  if (!data) return <NoData />
+
+  return (
+    <div>
+      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+        <Col xs={12} sm={8}>
+          <Card style={{ borderRadius: 8 }}>
+            <Statistic
+              title="Всего заказов"
+              value={data.total}
+              prefix={<ShoppingCartOutlined style={{ color: BLUE }} />}
+              valueStyle={{ color: DARK, fontSize: 28 }}
+            />
+          </Card>
+        </Col>
+        <Col xs={12} sm={8}>
+          <Card style={{ borderRadius: 8 }}>
+            <Statistic
+              title="Сегодня"
+              value={data.today}
+              prefix={<ClockCircleOutlined style={{ color: BLUE }} />}
+              valueStyle={{ color: DARK, fontSize: 28 }}
+            />
+          </Card>
+        </Col>
+        <Col xs={12} sm={8}>
+          <Card style={{ borderRadius: 8 }}>
+            <Statistic
+              title="В обработке"
+              value={data.pending}
+              prefix={<WarningOutlined style={{ color: data.pending > 0 ? '#fa8c16' : '#52c41a' }} />}
+              valueStyle={{ color: data.pending > 0 ? '#fa8c16' : DARK, fontSize: 28 }}
+            />
+          </Card>
+        </Col>
+      </Row>
+      <Button
+        type="primary"
+        size="large"
+        icon={<LinkOutlined />}
+        onClick={() => window.open(url, '_blank', 'noopener,noreferrer')}
+        style={{ background: BLUE }}
+      >
+        Открыть панель
+      </Button>
+    </div>
+  )
+}
+
 function LinkOnlyPanel({ url, description }: { url: string; description: string }) {
   return (
     <div>
@@ -275,18 +336,18 @@ interface PanelDef {
   icon: React.ReactNode
   url: string
   description?: string
-  type: 'chibbis' | 'flowwow' | 'link'
+  type: 'chibbis' | 'flowwow' | 'php' | 'link'
 }
 
 const PANELS: PanelDef[] = [
   { key: 'chibbis1',   label: 'Chibbis',           icon: <ShoppingCartOutlined />, url: 'https://soothing-insight-production-8757.up.railway.app/',      type: 'chibbis' },
   { key: 'chibbis2',   label: 'Chibbis (5 цветов)', icon: <ShoppingCartOutlined />, url: 'https://frontend-chibbis2-production.up.railway.app/',           type: 'chibbis' },
   { key: 'flowwow',    label: 'Flowwow',            icon: <GiftOutlined />,         url: 'https://zonal-curiosity-production-2157.up.railway.app/',        type: 'flowwow' },
-  { key: 'yandex',     label: 'Яндекс.Еда + Купер', icon: <CarOutlined />,          url: 'http://89.104.71.21/warehouse/',        description: 'Управление заказами из Яндекс.Еда и Купер', type: 'link' },
-  { key: 'flawery',    label: 'Флавери',            icon: <ShopOutlined />,         url: 'http://89.104.71.21/warehouse_flawery/', description: 'Склад и заказы для бренда Флавери',        type: 'link' },
-  { key: 'kuper',      label: 'Купер',              icon: <AppstoreOutlined />,     url: 'http://89.104.71.21/warehouse_kuper/',  description: 'Заказы через платформу Купер',             type: 'link' },
-  { key: 'letu',       label: 'Letu',               icon: <ThunderboltOutlined />,  url: 'http://89.104.71.21/warehouse_letu/',   description: 'Управление заказами через Letu',           type: 'link' },
-  { key: 'turbocake',  label: 'TurboCake',          icon: <GiftOutlined />,         url: 'http://89.104.71.21/warehouse_cake/',   description: 'Заказы для TurboCake — торты и десерты',  type: 'link' },
+  { key: 'yandex',     label: 'Яндекс.Еда + Купер', icon: <CarOutlined />,          url: 'http://89.104.71.21/warehouse/',        description: 'Управление заказами из Яндекс.Еда и Купер', type: 'php' },
+  { key: 'flawery',    label: 'Флавери',            icon: <ShopOutlined />,         url: 'http://89.104.71.21/warehouse_flawery/', description: 'Склад и заказы для бренда Флавери',        type: 'php' },
+  { key: 'kuper',      label: 'Купер',              icon: <AppstoreOutlined />,     url: 'http://89.104.71.21/warehouse_kuper/',  description: 'Конфигурация складов Купер',               type: 'link' },
+  { key: 'letu',       label: 'Letu',               icon: <ThunderboltOutlined />,  url: 'http://89.104.71.21/warehouse_letu/',   description: 'Управление заказами через Letu',           type: 'php' },
+  { key: 'turbocake',  label: 'TurboCake',          icon: <GiftOutlined />,         url: 'http://89.104.71.21/warehouse_cake/',   description: 'Заказы для TurboCake — торты и десерты',  type: 'php' },
   { key: 'orders',     label: 'Панель заказов',     icon: <TeamOutlined />,         url: 'http://89.104.71.21/panel/',            description: 'Общая панель всех входящих заказов',      type: 'link' },
   { key: 'erp',        label: 'ERP',                icon: <DatabaseOutlined />,     url: 'http://89.104.71.21/erp/',              description: 'Аналитика и управление ресурсами',         type: 'link' },
 ]
@@ -315,6 +376,13 @@ export default function App() {
 
   const panel = PANELS.find((p) => p.key === active)!
 
+  const phpDataMap: Record<string, PhpStats | null | undefined> = {
+    yandex: stats?.yandex,
+    flawery: stats?.flawery,
+    letu: stats?.letu,
+    turbocake: stats?.cake,
+  }
+
   function renderContent() {
     if (panel.type === 'chibbis') {
       const data = active === 'chibbis1' ? stats?.chibbis1 : stats?.chibbis2
@@ -322,6 +390,9 @@ export default function App() {
     }
     if (panel.type === 'flowwow') {
       return <FlowwowPanel data={stats?.flowwow ?? null} url={panel.url} loading={loading} />
+    }
+    if (panel.type === 'php') {
+      return <PhpPanel data={phpDataMap[active] ?? null} url={panel.url} loading={loading} />
     }
     return <LinkOnlyPanel url={panel.url} description={panel.description ?? ''} />
   }
@@ -376,7 +447,7 @@ export default function App() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <span style={{ color: DARK, fontSize: 18 }}>{panel.icon}</span>
               <Title level={4} style={{ margin: 0 }}>{panel.label}</Title>
-              {panel.type !== 'link' && (
+              {(panel.type === 'chibbis' || panel.type === 'flowwow' || panel.type === 'php') && (
                 <Tag color="blue" style={{ marginLeft: 4 }}>Live</Tag>
               )}
             </div>
@@ -384,7 +455,7 @@ export default function App() {
               size="small"
               icon={<ReloadOutlined spin={loading} />}
               onClick={fetchStats}
-              disabled={loading || panel.type === 'link'}
+              disabled={loading || (panel.type !== 'chibbis' && panel.type !== 'flowwow' && panel.type !== 'php')}
             >
               Обновить
             </Button>
