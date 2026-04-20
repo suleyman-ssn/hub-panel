@@ -13,6 +13,7 @@ import {
   Menu,
   Table,
   Tag,
+  Drawer,
 } from 'antd'
 import {
   ShoppingCartOutlined,
@@ -29,6 +30,7 @@ import {
   LinkOutlined,
   ClockCircleOutlined,
   WarningOutlined,
+  MenuOutlined,
 } from '@ant-design/icons'
 
 const { Header, Content, Sider } = Layout
@@ -357,6 +359,14 @@ export default function App() {
   const [loading, setLoading] = useState(true)
   const [active, setActive] = useState('chibbis1')
   const [collapsed, setCollapsed] = useState(false)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  const [drawerOpen, setDrawerOpen] = useState(false)
+
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
 
   const fetchStats = useCallback(async () => {
     setLoading(true)
@@ -397,8 +407,20 @@ export default function App() {
     return <LinkOnlyPanel url={panel.url} description={panel.description ?? ''} />
   }
 
+  const menuEl = (
+    <Menu
+      theme="dark"
+      mode="inline"
+      selectedKeys={[active]}
+      style={{ background: DARK, borderRight: 0, marginTop: 8 }}
+      items={PANELS.map((p) => ({ key: p.key, icon: p.icon, label: p.label }))}
+      onClick={({ key }) => { setActive(key); setDrawerOpen(false) }}
+    />
+  )
+
   return (
     <Layout style={{ minHeight: '100vh' }}>
+      {!isMobile && (
         <Sider
           collapsible
           collapsed={collapsed}
@@ -416,26 +438,32 @@ export default function App() {
               <AppstoreOutlined style={{ color: BLUE, fontSize: 20 }} />
             )}
           </div>
-          <Menu
-            theme="dark"
-            mode="inline"
-            selectedKeys={[active]}
-            style={{ background: DARK, borderRight: 0, marginTop: 8 }}
-            items={PANELS.map((p) => ({
-              key: p.key,
-              icon: p.icon,
-              label: p.label,
-            }))}
-            onClick={({ key }) => setActive(key)}
-          />
+          {menuEl}
         </Sider>
+      )}
+
+      {isMobile && (
+        <Drawer
+          placement="left"
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          width={220}
+          styles={{ body: { padding: 0, background: DARK }, header: { display: 'none' } }}
+        >
+          <div style={{ padding: '20px 16px', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <AppstoreOutlined style={{ color: BLUE, fontSize: 20 }} />
+            <Text strong style={{ color: '#fff', fontSize: 15 }}>Панели</Text>
+          </div>
+          {menuEl}
+        </Drawer>
+      )}
 
         <Layout>
           <Header
             style={{
               background: '#fff',
               borderBottom: '1px solid #f0f0f0',
-              padding: '0 24px',
+              padding: '0 16px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
@@ -445,9 +473,12 @@ export default function App() {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              {isMobile && (
+                <Button type="text" icon={<MenuOutlined />} onClick={() => setDrawerOpen(true)} style={{ fontSize: 18 }} />
+              )}
               <span style={{ color: DARK, fontSize: 18 }}>{panel.icon}</span>
-              <Title level={4} style={{ margin: 0 }}>{panel.label}</Title>
-              {(panel.type === 'chibbis' || panel.type === 'flowwow' || panel.type === 'php') && (
+              <Title level={4} style={{ margin: 0, fontSize: isMobile ? 15 : 20 }}>{panel.label}</Title>
+              {!isMobile && (panel.type === 'chibbis' || panel.type === 'flowwow' || panel.type === 'php') && (
                 <Tag color="blue" style={{ marginLeft: 4 }}>Live</Tag>
               )}
             </div>
@@ -461,7 +492,7 @@ export default function App() {
             </Button>
           </Header>
 
-          <Content style={{ padding: '24px', background: '#f5f5f5', minHeight: 'calc(100vh - 64px)' }}>
+          <Content style={{ padding: isMobile ? '12px' : '24px', background: '#f5f5f5', minHeight: 'calc(100vh - 64px)' }}>
             {renderContent()}
           </Content>
         </Layout>
